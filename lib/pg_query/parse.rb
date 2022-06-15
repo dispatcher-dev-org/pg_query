@@ -301,12 +301,13 @@ module PgQuery
             rangevar = next_item[:item].range_var
             next if rangevar.schemaname.empty? && @cte_names.include?(rangevar.relname)
 
-            table = [rangevar.schemaname, rangevar.relname].reject { |s| s.nil? || s.empty? }.join('.')
+            table = [rangevar.catalogname, rangevar.schemaname, rangevar.relname].reject { |s| s.nil? || s.empty? }.join('.')
             @tables << {
               name: table,
               type: next_item[:type],
               location: rangevar.location,
               schemaname: (rangevar.schemaname unless rangevar.schemaname.empty?),
+              catalogname: (rangevar.catalogname unless rangevar.catalogname.empty?),
               relname: rangevar.relname,
               inh: rangevar.inh
             }

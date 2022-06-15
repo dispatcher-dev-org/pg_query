@@ -808,6 +808,7 @@ describe PgQuery, '.parse' do
         location: 9,
         name: "bigtable",
         relname: "bigtable",
+        catalogname: nil,
         schemaname: nil,
         type: :ddl
       },
@@ -816,6 +817,7 @@ describe PgQuery, '.parse' do
         location: 19,
         name: "fattable",
         relname: "fattable",
+        catalogname: nil,
         schemaname: nil,
         type: :ddl
       }
@@ -1715,6 +1717,24 @@ $BODY$
         )
       )
     )
+  end
+
+
+  it 'parses a table with a catalog name' do
+    query = described_class.parse("SELECT * FROM testing.test.table_a")
+    expect(query.warnings).to eq []
+    expect(query.tables).to eq ['testing.test.table_a']
+    expect( expect(query.tables_with_details).to eq [
+      {
+        inh: true,
+        location: 14,
+        name: "testing.test.table_a",
+        catalogname: "testing",
+        relname: "table_a",
+        schemaname: "test",
+        type: :select
+      }
+    ])
   end
 
   describe 'parsing CREATE TABLE AS' do
